@@ -5,14 +5,24 @@ canvas.height = window.innerHeight;
 
 let c = canvas.getContext("2d");
 
+let mouse = {
+  x: undefined,
+  y: undefined,
+};
+
+document.addEventListener("mousemove", function (event) {
+  mouse.x = event.clientX;
+  mouse.y = event.clientY;
+});
+
 function Circle(x, y, dx, dy, speed) {
   this.x = x;
   this.y = y;
   this.dx = dx;
   this.dy = dy;
   this.speed = speed;
-  this.radius = 10;
-  this.colors = ["#62109F", "#DC0E0E", "#FE6244"];
+  this.radius = Math.floor(Math.random() * 60);
+  this.colors = ["#61109faa", "#dc0e0e9d", "#fe6344a0"];
 
   const color = this.colors[Math.floor(Math.random() * this.colors.length)];
   this.draw = function () {
@@ -25,21 +35,26 @@ function Circle(x, y, dx, dy, speed) {
   };
 
   this.update = function () {
-    if (this.x + this.radius > window.innerWidth || this.x - this.radius < 0) {
+    if (this.x + this.radius > window.innerWidth || this.x - this.radius < 0)
       this.dx = -this.dx;
-    }
-    if (this.y + this.radius > window.innerHeight || this.y - this.radius < 0) {
+    if (this.y + this.radius > window.innerHeight || this.y - this.radius < 0)
       this.dy = -this.dy;
-    }
 
     this.x += this.dx * this.speed;
     this.y += this.dy * this.speed;
+
+    const distance = Math.hypot(mouse.x - this.x, mouse.y - this.y);
+    if (distance < 200) {
+      if (this.radius < 50) this.radius += 1;
+    } else if (this.radius > 10) {
+      this.radius -= 1;
+    }
 
     this.draw();
   };
 }
 
-let numberOfCircle = 50;
+let numberOfCircle = 500;
 let circles = [];
 
 for (let i = 0; i < numberOfCircle; i++) {
@@ -47,7 +62,7 @@ for (let i = 0; i < numberOfCircle; i++) {
   let y = Math.random() * (window.innerHeight - 100) + 50;
   let dx = (Math.random() - 0.5) * 2;
   let dy = (Math.random() - 0.5) * 2;
-  let speed = 5;
+  let speed = 1;
   let circle = new Circle(x, y, dx, dy, speed);
   circles.push(circle);
 }
